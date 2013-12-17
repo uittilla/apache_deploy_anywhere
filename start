@@ -1,0 +1,39 @@
+#!/bin/sh
+
+export APP_BASE=$(dirname $0)
+export SERVER_NAME="roadmap-local.com"
+export APPLICATION_ENV="production"
+export APPLICATION_ENVIRONMENT="production"
+export ACCESS_LOG="|/usr/bin/cronolog $(pwd)/logs/%Y/%m/%d/access.log"
+export ERROR_LOG="|/usr/bin/cronolog $(pwd)/logs/%Y/%m/%d/error.log"
+DEFAULT_PORT=8080
+
+export PORT=${1-$DEFAULT_PORT}
+
+LIB=$(find /usr/lib -name '*mod_env*')
+export HTTP_LIBS=$(dirname $LIB)
+
+if [ -x /usr/sbin/apache2 ]
+then 
+   HTTP_BINARY="/usr/sbin/apache2";
+elif [ -x /usr/sbin/httpd2 ]
+then
+   HTTP_BINARY="/usr/sbin/httpd2";
+else
+   HTTP_BINARY="/usr/sbin/httpd";
+fi
+
+$APP_BASE/stop
+
+try_start() {
+    name="$1"; shift
+    command="$1"; shift
+
+    echo "Starting $name..."
+    if bash -c "$command"; then echo " OK."; else echo " ERROR."; fi
+}
+
+(
+ try_start "Application" \
+   "$HTTP_BINARY -d `pwd` -D $SERVER_NAME -D DEV -f $APP_BASE/conf/httpd.conf"
+)   

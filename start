@@ -1,9 +1,9 @@
 #!/bin/sh
 
 export APP_BASE=$(dirname $0)
-export SERVER_NAME="roadmap-local.com"
-export APPLICATION_ENV="production"
-export APPLICATION_ENVIRONMENT="production"
+export SERVER_NAME="my-local.com"
+export APPLICATION_ENV="development"
+export APPLICATION_ENVIRONMENT="development"
 export ACCESS_LOG="|/usr/bin/cronolog $(pwd)/logs/%Y/%m/%d/access.log"
 export ERROR_LOG="|/usr/bin/cronolog $(pwd)/logs/%Y/%m/%d/error.log"
 DEFAULT_PORT=8080
